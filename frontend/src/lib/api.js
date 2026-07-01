@@ -1,12 +1,8 @@
 import axios from "axios";
 
-const api = axios.create({ baseURL: `${process.env.REACT_APP_BACKEND_URL}/api` });
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("onanar_token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
+// Auth uses an httpOnly cookie set by the backend, so the browser attaches it
+// automatically on same-site requests — the frontend never reads or stores the token.
+const api = axios.create({ baseURL: `${process.env.REACT_APP_BACKEND_URL}/api`, withCredentials: true });
 
 export function formatApiError(detail) {
   if (detail == null) return "Something went wrong. Please try again.";

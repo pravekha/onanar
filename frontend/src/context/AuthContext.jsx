@@ -8,22 +8,18 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("onanar_token");
-    if (!token) { setLoading(false); return; }
     api.get("/auth/me")
       .then((r) => setUser(r.data))
-      .catch(() => localStorage.removeItem("onanar_token"))
+      .catch(() => setUser(null))
       .finally(() => setLoading(false));
   }, []);
 
-  const login = (token, userData) => {
-    localStorage.setItem("onanar_token", token);
+  const login = (userData) => {
     setUser(userData);
   };
 
-  const logout = () => {
-    localStorage.removeItem("onanar_token");
-    setUser(null);
+  const logout = async () => {
+    try { await api.post("/auth/logout"); } finally { setUser(null); }
   };
 
   return (

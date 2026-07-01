@@ -11,7 +11,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
-  const handleLogout = () => { logout(); setOpen(false); navigate("/"); };
+  const handleLogout = async () => { await logout(); setOpen(false); navigate("/"); };
 
   const links = (
     <>

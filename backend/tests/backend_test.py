@@ -78,7 +78,9 @@ class TestAuth:
         assert r.status_code == 400
 
     def test_me_no_token(self, sess):
-        r = sess.get(f"{API}/auth/me")
+        # Use a cookie-less request: `sess` may carry the httpOnly auth cookie
+        # from earlier logins in this session, which would mask a 401 here.
+        r = requests.get(f"{API}/auth/me")
         assert r.status_code == 401
 
 
@@ -162,7 +164,9 @@ class TestProfileAndMatch:
         assert has_score, "expected match_score with logged in artist profile"
 
     def test_no_match_score_when_logged_out(self, sess):
-        r = sess.get(f"{API}/opportunities")
+        # Cookie-less request: `sess` may still carry an auth cookie from an
+        # earlier login in this session.
+        r = requests.get(f"{API}/opportunities")
         for d in r.json():
             assert "match_score" not in d
 
@@ -194,7 +198,9 @@ class TestSaves:
         assert d.status_code == 200
 
     def test_save_requires_auth(self, sess):
-        r = sess.post(f"{API}/saves", json={"opportunity_id": "any"})
+        # Cookie-less request: `sess` may still carry an auth cookie from an
+        # earlier login in this session.
+        r = requests.post(f"{API}/saves", json={"opportunity_id": "any"})
         assert r.status_code == 401
 
 
@@ -275,6 +281,8 @@ class TestAdmin:
         assert data["opportunities_added"] >= 40
 
     def test_admin_endpoints_require_auth(self, sess):
+        # Cookie-less requests: `sess` may still carry an auth cookie from an
+        # earlier login in this session.
         for path in ("/admin/stats", "/admin/opportunities"):
-            r = sess.get(f"{API}{path}")
+            r = requests.get(f"{API}{path}")
             assert r.status_code == 401

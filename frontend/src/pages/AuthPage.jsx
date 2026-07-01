@@ -19,7 +19,7 @@ export default function AuthPage({ mode }) {
     try {
       const { data } = await api.post(isLogin ? "/auth/login" : "/auth/register",
         isLogin ? { email: form.email, password: form.password } : form);
-      login(data.token, data.user);
+      login(data.user);
       toast.success(isLogin ? "Welcome back" : "Account created");
       navigate(data.user.role === "admin" ? "/admin" : isLogin ? "/opportunities" : "/profile");
     } catch (err) {

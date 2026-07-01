@@ -5,15 +5,19 @@ ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
 import os
+import re
+import time
 import uuid
 import logging
 import bcrypt
 import jwt
+from collections import defaultdict
+from contextlib import asynccontextmanager
 from datetime import datetime, timezone, timedelta
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, Request
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, Request, Response
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from typing import List, Optional
 
 from seed_data import get_seed_opportunities
@@ -21,14 +25,39 @@ from seed_data import get_seed_opportunities
 client = AsyncIOMotorClient(os.environ['MONGO_URL'])
 db = client[os.environ['DB_NAME']]
 
-app = FastAPI()
 api = APIRouter(prefix="/api")
 
 JWT_ALG = "HS256"
 JWT_SECRET = os.environ['JWT_SECRET']
 
+COOKIE_NAME = "access_token"
+COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "false").lower() == "true"
+COOKIE_SAMESITE = os.environ.get("COOKIE_SAMESITE", "lax")
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# CORS: wildcard origins are incompatible with credentialed (cookie) requests,
+# so we require an explicit allow-list instead of defaulting to '*'.
+CORS_ORIGINS = [o.strip() for o in os.environ.get("CORS_ORIGINS", "http://localhost:3000").split(",") if o.strip()]
+if "*" in CORS_ORIGINS:
+    logger.warning("CORS_ORIGINS contains '*', which cannot be used with credentialed requests; ignoring it.")
+    CORS_ORIGINS = [o for o in CORS_ORIGINS if o != "*"]
+
+
+# ---------- Rate limiting (simple in-memory sliding window; single-process) ----------
+_rate_buckets: dict = defaultdict(list)
+
+
+def enforce_rate_limit(request: Request, bucket_name: str, max_attempts: int = 10, window_seconds: int = 300) -> None:
+    client_ip = request.client.host if request.client else "unknown"
+    key = f"{bucket_name}:{client_ip}"
+    now = time.monotonic()
+    bucket = _rate_buckets[key]
+    bucket[:] = [t for t in bucket if now - t < window_seconds]
+    if len(bucket) >= max_attempts:
+        raise HTTPException(status_code=429, detail="Too many attempts. Please try again later.")
+    bucket.append(now)
 
 
 # ---------- Auth helpers ----------
@@ -46,13 +75,22 @@ def create_token(user_id: str, email: str, role: str) -> str:
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALG)
 
 
+def set_auth_cookie(response: Response, token: str) -> None:
+    response.set_cookie(key=COOKIE_NAME, value=token, httponly=True, secure=COOKIE_SECURE,
+                         samesite=COOKIE_SAMESITE, max_age=7 * 24 * 3600, path="/")
+
+
+def clear_auth_cookie(response: Response) -> None:
+    response.delete_cookie(key=COOKIE_NAME, path="/")
+
+
 async def get_current_user(request: Request) -> dict:
     token = None
     auth_header = request.headers.get("Authorization", "")
     if auth_header.startswith("Bearer "):
         token = auth_header[7:]
     if not token:
-        token = request.cookies.get("access_token")
+        token = request.cookies.get(COOKIE_NAME)
     if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     try:
@@ -83,12 +121,12 @@ async def require_admin(user: dict = Depends(get_current_user)) -> dict:
 # ---------- Models ----------
 class RegisterIn(BaseModel):
     name: str
-    email: str
+    email: EmailStr
     password: str
 
 
 class LoginIn(BaseModel):
-    email: str
+    email: EmailStr
     password: str
 
 
@@ -292,7 +330,8 @@ async def get_profile_for(user: Optional[dict]) -> Optional[dict]:
 
 # ---------- Auth routes ----------
 @api.post("/auth/register")
-async def register(body: RegisterIn):
+async def register(body: RegisterIn, request: Request, response: Response):
+    enforce_rate_limit(request, "register", max_attempts=10, window_seconds=600)
     email = body.email.lower().strip()
     if len(body.password) < 6:
         raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
@@ -303,21 +342,30 @@ async def register(body: RegisterIn):
             "created_at": datetime.now(timezone.utc).isoformat()}
     await db.users.insert_one(dict(user))
     token = create_token(user["id"], email, "artist")
+    set_auth_cookie(response, token)
     user.pop("password_hash")
     user.pop("_id", None)
     return {"token": token, "user": user}
 
 
 @api.post("/auth/login")
-async def login(body: LoginIn):
+async def login(body: LoginIn, request: Request, response: Response):
+    enforce_rate_limit(request, "login", max_attempts=10, window_seconds=300)
     email = body.email.lower().strip()
     user = await db.users.find_one({"email": email})
     if not user or not verify_password(body.password, user["password_hash"]):
         raise HTTPException(status_code=401, detail="Invalid email or password")
     token = create_token(user["id"], email, user.get("role", "artist"))
+    set_auth_cookie(response, token)
     user.pop("password_hash")
     user.pop("_id", None)
     return {"token": token, "user": user}
+
+
+@api.post("/auth/logout")
+async def logout(response: Response):
+    clear_auth_cookie(response)
+    return {"ok": True}
 
 
 @api.get("/auth/me")
@@ -356,15 +404,15 @@ async def list_opportunities(
     if opportunity_type:
         q["opportunity_type"] = opportunity_type
     if location:
-        q["location"] = {"$regex": location, "$options": "i"}
+        q["location"] = {"$regex": re.escape(location), "$options": "i"}
     if career_stage:
-        q["career_stage"] = {"$regex": f"({career_stage}|Any|Open to all)", "$options": "i"}
+        q["career_stage"] = {"$regex": f"({re.escape(career_stage)}|Any|Open to all)", "$options": "i"}
     if difficulty:
         q["difficulty"] = difficulty
     if featured:
         q["verified"] = True
     if search:
-        rx = {"$regex": search, "$options": "i"}
+        rx = {"$regex": re.escape(search), "$options": "i"}
         q["$or"] = [{"title": rx}, {"organisation": rx}, {"summary": rx}, {"tags": rx}, {"disciplines": rx}]
 
     docs = await db.opportunities.find(q, {"_id": 0}).to_list(500)
@@ -388,13 +436,13 @@ async def get_opportunity(opp_id: str, user: Optional[dict] = Depends(get_option
         raise HTTPException(status_code=404, detail="Opportunity not found")
     profile = await get_profile_for(user)
     doc = enrich(doc, profile)
-    similar = await db.opportunities.find(
+    similar_raw = await db.opportunities.find(
         {"id": {"$ne": opp_id}, "status": "published",
          "$or": [{"disciplines": {"$in": doc.get("disciplines", [])}},
                  {"opportunity_type": doc.get("opportunity_type")}]},
         {"_id": 0}).to_list(20)
-    similar = [enrich(s) for s in similar if enrich(s)["deadline_state"] != "closed"][:3]
-    doc["similar"] = similar
+    similar_enriched = [enrich(s) for s in similar_raw]
+    doc["similar"] = [s for s in similar_enriched if s["deadline_state"] != "closed"][:3]
     return doc
 
 
@@ -530,9 +578,9 @@ async def generate_digest(body: DigestIn, admin: dict = Depends(require_admin)):
     if body.opportunity_type:
         q["opportunity_type"] = body.opportunity_type
     if body.location:
-        q["location"] = {"$regex": body.location, "$options": "i"}
+        q["location"] = {"$regex": re.escape(body.location), "$options": "i"}
     if body.career_stage:
-        q["career_stage"] = {"$regex": f"({body.career_stage}|Any|Open to all)", "$options": "i"}
+        q["career_stage"] = {"$regex": f"({re.escape(body.career_stage)}|Any|Open to all)", "$options": "i"}
     docs = await db.opportunities.find(q, {"_id": 0}).to_list(500)
     docs = [enrich(d) for d in docs]
     dated = [d for d in docs if d["days_left"] is not None and d["deadline_state"] != "closed"
@@ -594,20 +642,20 @@ async def root():
     return {"message": "Onanar API"}
 
 
-app.include_router(api)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-
-@app.on_event("startup")
-async def startup():
+# ---------- App lifecycle ----------
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     await db.users.create_index("email", unique=True)
+    await db.opportunities.create_index("status")
+    await db.opportunities.create_index("disciplines")
+    await db.opportunities.create_index("opportunity_type")
+    await db.opportunities.create_index("career_stage")
+    await db.opportunities.create_index("difficulty")
+    await db.opportunities.create_index("deadline")
+    await db.opportunities.create_index("created_at")
+    await db.saves.create_index([("user_id", 1), ("opportunity_id", 1)], unique=True)
+    await db.saves.create_index("user_id")
+
     admin_email = os.environ.get("ADMIN_EMAIL", "admin@onanar.in")
     admin_password = os.environ.get("ADMIN_PASSWORD", "admin123")
     existing = await db.users.find_one({"email": admin_email})
@@ -621,7 +669,18 @@ async def startup():
         await db.opportunities.insert_many(get_seed_opportunities())
         logger.info("Seeded opportunities")
 
+    yield
 
-@app.on_event("shutdown")
-async def shutdown_db_client():
     client.close()
+
+
+app = FastAPI(lifespan=lifespan)
+app.include_router(api)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=CORS_ORIGINS,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
