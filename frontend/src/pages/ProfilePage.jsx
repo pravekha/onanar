@@ -68,10 +68,10 @@ export default function ProfilePage() {
   return (
     <main className="max-w-5xl mx-auto px-4 sm:px-8 py-10 bg-paper">
       {/* Header bento */}
-      <div className="grid grid-cols-12 gap-4 md:gap-5 mb-6">
+      <div className="grid grid-cols-12 gap-5 mb-6">
         <div className="col-span-12 md:col-span-8 bg-white rounded-3xl p-8 bento">
           <p className="section-num mb-3">01 / Profile</p>
-          <h1 className="font-display text-5xl md:text-6xl leading-[0.95] text-ink">Your <span className="marker-butter">practice</span>.</h1>
+          <h1 className="font-display text-5xl md:text-6xl leading-[0.95] text-ink">Your <span className="marker-butter">practice.</span></h1>
           <p className="mt-4 text-sm text-ink/70">Your profile powers match scores across every opportunity.</p>
         </div>
         <div className="col-span-12 md:col-span-4 bg-lilac rounded-3xl p-8 bento flex flex-col justify-between">

@@ -50,7 +50,7 @@ export default function Navbar() {
   );
 
   return (
-    <header className="sticky top-0 z-40 bg-paper/90 backdrop-blur-md border-b border-lilac/40">
+    <header className="sticky top-0 z-50 bg-paper border-b border-lilac/40 shadow-[0_1px_0_rgba(35,0,63,0.04)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between gap-4">
         <Link data-testid="nav-logo" to="/" className="flex items-baseline gap-3 group">
           <span className="font-display text-4xl leading-none text-ink group-hover:text-flame transition-colors">Onanar</span>

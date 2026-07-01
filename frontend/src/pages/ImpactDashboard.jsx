@@ -58,7 +58,7 @@ export default function ImpactDashboard() {
   return (
     <main className="max-w-6xl mx-auto px-4 sm:px-8 py-10 bg-paper">
       {/* Header bento */}
-      <div className="grid grid-cols-12 gap-4 md:gap-5 mb-6">
+      <div className="grid grid-cols-12 gap-5 mb-6">
         <div className="col-span-12 bg-white rounded-3xl p-8 bento">
           <p className="section-num mb-3">03 / Impact</p>
           <h1 className="font-display text-5xl md:text-6xl leading-[0.95] text-ink">
@@ -69,7 +69,7 @@ export default function ImpactDashboard() {
       </div>
 
       {/* Stat bento — asymmetric */}
-      <div className="grid grid-cols-12 gap-4 md:gap-5 mb-8">
+      <div className="grid grid-cols-12 gap-5 mb-8">
         {highlight.map((c, i) => {
           const style = HL_STYLES[i];
           // First two are "hero" tiles — larger
@@ -83,7 +83,7 @@ export default function ImpactDashboard() {
         })}
       </div>
 
-      <div className="grid grid-cols-12 gap-4 md:gap-5">
+      <div className="grid grid-cols-12 gap-5">
         {/* Metrics form */}
         <form onSubmit={save} className="col-span-12 lg:col-span-6 bg-white rounded-3xl p-8 bento space-y-5">
           <p className="section-num">Enter metrics</p>

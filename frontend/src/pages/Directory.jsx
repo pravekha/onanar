@@ -64,7 +64,7 @@ export default function Directory() {
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-8 py-12 bg-paper">
       <p className="section-num mb-4">01 / Directory</p>
-      <div className="grid grid-cols-12 gap-4 md:gap-5 mb-8">
+      <div className="grid grid-cols-12 gap-5 mb-8">
         <div className="col-span-12 lg:col-span-8 bg-white rounded-3xl p-8 bento">
           <h1 className="font-display text-5xl sm:text-6xl md:text-7xl leading-[0.95] text-ink">
             The <span className="marker-butter">opportunity</span> directory.
@@ -121,7 +121,7 @@ export default function Directory() {
         </div>
       ) : (
         <>
-          <div data-testid="directory-grid" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+          <div data-testid="directory-grid" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {shown.map((o, i) => (
               <OpportunityCard key={o.id} opp={o} saved={savedIds.has(o.id)} onToggleSave={toggleSave} variant={cardVariantAt(i)} />
             ))}

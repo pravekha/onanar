@@ -47,13 +47,13 @@ export default function Landing() {
       {/* HERO — bento grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-8 pt-10 pb-16">
         <p className="section-num mb-6">00 / India&apos;s Opportunity Desk</p>
-        <div className="grid grid-cols-12 gap-4 md:gap-5">
+        <div className="grid grid-cols-12 gap-5">
           {/* Headline tile */}
           <div className="col-span-12 lg:col-span-8 bg-white rounded-3xl p-8 md:p-12 bento flex flex-col justify-between min-h-[420px]">
             <div>
               <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-[86px] leading-[0.95] text-ink tracking-tight">
                 Creative<br />opportunities,<br />
-                <span className="marker-butter">opened up</span>.
+                <span className="marker-butter">opened up.</span>
               </h1>
               <p className="mt-8 text-base md:text-lg text-ink/70 max-w-xl leading-relaxed">
                 Grants, residencies, fellowships, scholarships and open calls for India&apos;s creative practitioners — searchable, matchable, all in one desk.
@@ -139,7 +139,7 @@ export default function Landing() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-12 gap-4 md:gap-5 auto-rows-min">
+          <div className="grid grid-cols-12 gap-5 auto-rows-min">
             {featured[0] && (
               <div className="col-span-12 lg:col-span-6">
                 <OpportunityCard opp={featured[0]} saved={savedIds.has(featured[0].id)} onToggleSave={toggleSave} variant="ink" featured />
@@ -156,12 +156,12 @@ export default function Landing() {
               </div>
             )}
             {featured[3] && (
-              <div className="col-span-12 sm:col-span-6 lg:col-span-4">
+              <div className="col-span-12 sm:col-span-6 lg:col-span-6">
                 <OpportunityCard opp={featured[3]} saved={savedIds.has(featured[3].id)} onToggleSave={toggleSave} variant="lilac" />
               </div>
             )}
             {featured[4] && (
-              <div className="col-span-12 sm:col-span-6 lg:col-span-8">
+              <div className="col-span-12 sm:col-span-6 lg:col-span-6">
                 <OpportunityCard opp={featured[4]} saved={savedIds.has(featured[4].id)} onToggleSave={toggleSave} variant="white" />
               </div>
             )}
@@ -177,7 +177,7 @@ export default function Landing() {
             <h2 className="font-display text-4xl sm:text-5xl md:text-6xl text-ink leading-none">Don&apos;t let these <span className="marker-butter">slip</span></h2>
             <p className="mt-3 text-sm text-ink/60">Deadlines within the next 7 days.</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {closing.map((o, i) => (
               <OpportunityCard key={o.id} opp={o} saved={savedIds.has(o.id)} onToggleSave={toggleSave} variant={cardVariantAt(i + 3)} />
             ))}
@@ -188,11 +188,11 @@ export default function Landing() {
       {/* HOW IT WORKS — dark indigo bento */}
       <section className="bg-ink text-butter">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 py-20">
-          <div className="grid grid-cols-12 gap-4 md:gap-5 items-end mb-12">
+          <div className="grid grid-cols-12 gap-5 items-end mb-12">
             <div className="col-span-12 lg:col-span-8">
               <p className="section-num mb-4">03 / How it works</p>
               <h2 className="font-display text-5xl sm:text-6xl md:text-7xl text-butter leading-[0.95]">
-                Three steps, <span className="marker-lilac">one desk</span>.
+                Three steps, <span className="marker-lilac">one desk.</span>
               </h2>
             </div>
             <p className="col-span-12 lg:col-span-4 text-base text-lilac leading-relaxed">
@@ -200,7 +200,7 @@ export default function Landing() {
             </p>
           </div>
 
-          <div className="grid grid-cols-12 gap-4 md:gap-5">
+          <div className="grid grid-cols-12 gap-5">
             {[
               { icon: UserRound, n: "01", t: "Create your profile", d: "Tell us your discipline, city, career stage and interests. Two minutes, once.", bg: "bg-lilac", txt: "text-ink" },
               { icon: Compass, n: "02", t: "Discover matches", d: "Every listing gets a match score against your profile — with the reasons why.", bg: "bg-butter", txt: "text-ink" },

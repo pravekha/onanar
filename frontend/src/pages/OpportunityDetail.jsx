@@ -73,7 +73,7 @@ export default function OpportunityDetail() {
         <p className="text-base text-ink/70 mt-4">{opp.organisation} · {opp.source_type}</p>
       </div>
 
-      <div className="grid grid-cols-12 gap-4 md:gap-5">
+      <div className="grid grid-cols-12 gap-5">
         {/* MAIN CONTENT */}
         <div className="col-span-12 lg:col-span-8 space-y-5">
           {opp.match_summary && (
@@ -160,7 +160,7 @@ export default function OpportunityDetail() {
         <section className="mt-16 pt-10 border-t border-lilac/40">
           <p className="section-num mb-3">More like this</p>
           <h2 className="font-display text-4xl sm:text-5xl text-ink mb-8">Similar opportunities</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {opp.similar.map((s, i) => <OpportunityCard key={s.id} opp={s} variant={cardVariantAt(i)} />)}
           </div>
         </section>

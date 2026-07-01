@@ -21,6 +21,7 @@ body {
 
 .section-num {
     font-family: 'Instrument Sans', sans-serif;
+    font-weight: 600;
 }
 
 /* Bento tile primitives */
@@ -41,26 +42,9 @@ body {
     box-shadow: 0 10px 28px rgba(35, 0, 63, 0.10);
 }
 
-/* Highlighted marker text — a light-colored block behind a phrase */
-.marker-butter {
-    background: #FFFDB4;
-    padding: 0 0.35em;
-    border-radius: 6px;
-    box-decoration-break: clone;
-    -webkit-box-decoration-break: clone;
-}
-
-.marker-lilac {
-    background: #BCACCE;
-    padding: 0 0.35em;
-    border-radius: 6px;
-    box-decoration-break: clone;
-    -webkit-box-decoration-break: clone;
-}
-
 /* Numbered section label */
 .section-num {
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: 'Instrument Sans', sans-serif;
     font-size: 0.72rem;
     font-weight: 600;
     letter-spacing: 0.25em;
@@ -101,6 +85,26 @@ body {
 ::selection {
     background: #F94500;
     color: #FFFDB4;
+}
+
+/* Highlighter-style text marker — soft rounded swipe, sits behind text baseline */
+.marker-butter,
+.marker-lilac {
+    padding: 0.04em 0.3em 0.14em;
+    border-radius: 6px;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    position: relative;
+    top: 0.05em;
+    line-height: inherit;
+}
+.marker-butter {
+    background-color: #FFFDB4;
+    color: #23003F;
+}
+.marker-lilac {
+    background-color: #BCACCE;
+    color: #23003F;
 }
 
 input:focus, textarea:focus, select:focus {

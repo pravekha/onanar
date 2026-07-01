@@ -37,11 +37,11 @@ export default function AdminDashboard() {
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-8 py-10 bg-paper">
       {/* Header */}
-      <div className="grid grid-cols-12 gap-4 md:gap-5 mb-6">
+      <div className="grid grid-cols-12 gap-5 mb-6">
         <div className="col-span-12 md:col-span-8 bg-white rounded-3xl p-8 bento">
           <p className="section-num mb-3">01 / Admin</p>
           <h1 className="font-display text-5xl md:text-6xl leading-[0.95] text-ink">
-            Curate the <span className="marker-butter">desk</span>.
+            Curate the <span className="marker-butter">desk.</span>
           </h1>
           <p className="mt-4 text-sm text-ink/70">Manage listings, verification and publication.</p>
         </div>
@@ -58,7 +58,7 @@ export default function AdminDashboard() {
       {stats && (
         <>
           {/* Stat tiles */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mb-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
             {[
               { label: "Total opportunities", value: stats.total, testId: "stat-total" },
               { label: "Open opportunities", value: stats.open, testId: "stat-open" },
@@ -73,7 +73,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Distribution tiles */}
-          <div className="grid md:grid-cols-2 gap-4 md:gap-5 mb-8">
+          <div className="grid md:grid-cols-2 gap-5 mb-8">
             <div className="bg-white rounded-3xl p-6 bento">
               <p className="section-num mb-4">By discipline</p>
               <div className="space-y-2">

@@ -34,13 +34,13 @@ export default function AuthPage({ mode }) {
 
   return (
     <main className="max-w-6xl mx-auto px-4 sm:px-8 py-12 bg-paper">
-      <div className="grid grid-cols-12 gap-4 md:gap-5">
+      <div className="grid grid-cols-12 gap-5">
         {/* Copy tile */}
         <div className="col-span-12 lg:col-span-5 order-2 lg:order-1 bg-ink text-butter rounded-3xl p-10 bento flex flex-col justify-between min-h-[500px]">
           <div>
             <p className="section-num mb-4">{isLogin ? "00 / Welcome" : "00 / Join"}</p>
             <h1 className="font-display text-5xl md:text-6xl text-butter leading-[0.95]">
-              {isLogin ? <>Welcome<br />back to the <span className="marker-lilac">desk</span>.</> : <>Start your<br /><span className="marker-lilac">opportunity</span> desk.</>}
+              {isLogin ? <>Welcome<br />back to the <span className="marker-lilac">desk.</span></> : <>Start your<br /><span className="marker-lilac">opportunity</span> desk.</>}
             </h1>
           </div>
           <div className="space-y-2 text-sm text-lilac">

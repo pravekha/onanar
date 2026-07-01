@@ -72,7 +72,7 @@ export default function OpportunityForm() {
       <div className="bg-white rounded-3xl p-8 bento mb-6">
         <p className="section-num mb-3">{id ? "Edit" : "New"}</p>
         <h1 className="font-display text-5xl md:text-6xl leading-[0.95] text-ink">
-          {id ? <>Edit <span className="marker-lilac">opportunity</span>.</> : <>Add an <span className="marker-butter">opportunity</span>.</>}
+          {id ? <>Edit <span className="marker-lilac">opportunity.</span></> : <>Add an <span className="marker-butter">opportunity.</span></>}
         </h1>
       </div>
 
