@@ -68,7 +68,7 @@ export default function TrackerPage() {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
                     <Link to={`/opportunities/${o.id}`} className="font-display text-xl font-semibold hover:text-[#D94A2B] transition-colors">{o.title}</Link>
-                    <p className="text-sm text-[#7A7A7A]">{o.organisation} · Deadline {o.deadline}</p>
+                    <p className="text-sm text-[#7A7A7A]">{o.organisation} · Deadline {o.deadline || o.deadline_note || "recurring"}</p>
                     <div className="mt-2 flex flex-wrap items-center gap-2">
                       <span className={`text-xs px-2.5 py-1 rounded-sm ${badge.cls}`}>{badge.label}</span>
                       <a href={o.source_url} target="_blank" rel="noopener noreferrer" data-testid={`tracker-source-${s.id}`}

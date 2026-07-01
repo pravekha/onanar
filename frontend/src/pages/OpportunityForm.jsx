@@ -12,7 +12,7 @@ export default function OpportunityForm() {
   const navigate = useNavigate();
   const [f, setF] = useState({
     title: "", organisation: "", opportunity_type: "Grant", disciplines: [], location: "",
-    online_available: false, funding_amount: "", deadline: "", summary: "", description: "",
+    online_available: false, funding_amount: "", deadline: "", deadline_note: "", summary: "", description: "",
     eligibility: "", application_fee: "None", difficulty: "Medium", career_stage: "Any",
     source_url: "", source_type: "Foundation", verified: false, status: "published",
   });
@@ -41,7 +41,7 @@ export default function OpportunityForm() {
       const body = {
         title: f.title, organisation: f.organisation, opportunity_type: f.opportunity_type,
         disciplines: f.disciplines, location: f.location, online_available: f.online_available,
-        funding_amount: f.funding_amount, deadline: f.deadline, summary: f.summary,
+        funding_amount: f.funding_amount, deadline: f.deadline || "", deadline_note: f.deadline_note || "", summary: f.summary,
         description: f.description, eligibility: f.eligibility,
         required_documents: docsText.split(",").map((s) => s.trim()).filter(Boolean),
         application_fee: f.application_fee, difficulty: f.difficulty, career_stage: f.career_stage,
@@ -94,7 +94,8 @@ export default function OpportunityForm() {
         <div className="grid sm:grid-cols-2 gap-4">
           <div><label className={label}>Location</label><input data-testid="opp-location" value={f.location} onChange={set("location")} className={input} placeholder="City, State or Pan-India" /></div>
           <div><label className={label}>Funding amount / benefit</label><input data-testid="opp-funding" value={f.funding_amount} onChange={set("funding_amount")} className={input} placeholder="₹2,00,000 + mentorship" /></div>
-          <div><label className={label}>Deadline *</label><input data-testid="opp-deadline" required type="date" value={f.deadline} onChange={set("deadline")} className={input} /></div>
+          <div><label className={label}>Deadline (leave empty if recurring)</label><input data-testid="opp-deadline" type="date" value={f.deadline} onChange={set("deadline")} className={input} /></div>
+          <div><label className={label}>Deadline note (for recurring cycles)</label><input data-testid="opp-deadline-note" value={f.deadline_note} onChange={set("deadline_note")} className={input} placeholder="e.g. Annual cycle, opens Aug" /></div>
           <div><label className={label}>Application fee</label><input data-testid="opp-fee" value={f.application_fee} onChange={set("application_fee")} className={input} /></div>
         </div>
         <div><label className={label}>Summary</label><textarea data-testid="opp-summary" rows={2} value={f.summary} onChange={set("summary")} className={input} /></div>

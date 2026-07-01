@@ -17,6 +17,7 @@ export const STATUS_LABELS = {
 
 export function deadlineBadge(opp) {
   if (opp.deadline_state === "closed") return { label: "Closed", cls: "bg-[#1F1F1F] text-white" };
+  if (opp.deadline_state === "rolling") return { label: "Recurring — check cycle", cls: "border border-[#D8CFC2] text-[#7A7A7A]" };
   if (opp.deadline_state === "closing_soon") return { label: `Closing in ${opp.days_left} day${opp.days_left === 1 ? "" : "s"}`, cls: "bg-[#D94A2B] text-white" };
   if (opp.deadline_state === "closing_month") return { label: `${opp.days_left} days left`, cls: "bg-[#4F6F52] text-white" };
   return { label: "Open", cls: "border border-[#4F6F52] text-[#4F6F52]" };

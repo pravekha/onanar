@@ -109,7 +109,7 @@ export default function AdminDashboard() {
                   <p className="text-xs text-[#7A7A7A]">{o.organisation}</p>
                 </td>
                 <td className="px-4 py-3">{o.opportunity_type}</td>
-                <td className="px-4 py-3">{o.deadline}</td>
+                <td className="px-4 py-3">{o.deadline || "Recurring"}</td>
                 <td className={`px-4 py-3 capitalize ${STATUS_COLORS[o.status] || ""}`}>{o.status}</td>
                 <td className="px-4 py-3">{o.verified ? <BadgeCheck size={16} className="text-[#4F6F52]" /> : "—"}</td>
                 <td className="px-4 py-3">

@@ -121,7 +121,8 @@ class OpportunityIn(BaseModel):
     location: str = ""
     online_available: bool = False
     funding_amount: str = ""
-    deadline: str
+    deadline: str = ""
+    deadline_note: str = ""
     summary: str = ""
     description: str = ""
     eligibility: str = ""
@@ -165,15 +166,17 @@ class DigestIn(BaseModel):
 # ---------- Deadline & match logic ----------
 def deadline_info(opp: dict) -> dict:
     try:
-        dl = datetime.strptime(opp["deadline"], "%Y-%m-%d").date()
+        dl = datetime.strptime(opp.get("deadline") or "", "%Y-%m-%d").date()
         days = (dl - datetime.now(timezone.utc).date()).days
     except Exception:
         days = None
     if opp.get("status") == "closed" or (days is not None and days < 0):
         state = "closed"
-    elif days is not None and days <= 7:
+    elif days is None:
+        state = "rolling"
+    elif days <= 7:
         state = "closing_soon"
-    elif days is not None and days <= 30:
+    elif days <= 30:
         state = "closing_month"
     else:
         state = "open"
@@ -224,14 +227,15 @@ def compute_match(opp: dict, profile: dict) -> dict:
 
     stage = profile.get("career_stage", "")
     opp_stage = opp.get("career_stage", "Any")
-    if opp_stage == "Any" or opp_stage == stage:
+    osl = opp_stage.lower()
+    if "any" in osl or "open to all" in osl:
         score += 15
-        if opp_stage != "Any":
-            reasons.append(f"suitable for {stage.lower()} practitioners")
-        else:
-            reasons.append("open to all career stages")
+        reasons.append("open to all career stages")
+    elif stage and stage.lower() in osl:
+        score += 15
+        reasons.append(f"suitable for {stage.lower()} practitioners")
     else:
-        cautions.append(f"Aimed at {opp_stage.lower()} practitioners; you listed {stage.lower() or 'no stage'}.")
+        cautions.append(f"Aimed at {osl} practitioners; you listed {stage.lower() or 'no stage'}.")
 
     if opp.get("opportunity_type") in profile.get("preferred_types", []):
         score += 15
@@ -251,6 +255,9 @@ def compute_match(opp: dict, profile: dict) -> dict:
     days = di["days_left"]
     if di["deadline_state"] == "closed":
         cautions.append("This opportunity has closed.")
+    elif di["deadline_state"] == "rolling":
+        score += 5
+        reasons.append("recurring cycle — verify the current window")
     elif days is not None:
         if 7 < days <= 30:
             score += 10
@@ -351,7 +358,7 @@ async def list_opportunities(
     if location:
         q["location"] = {"$regex": location, "$options": "i"}
     if career_stage:
-        q["career_stage"] = {"$in": [career_stage, "Any"]}
+        q["career_stage"] = {"$regex": f"({career_stage}|Any|Open to all)", "$options": "i"}
     if difficulty:
         q["difficulty"] = difficulty
     if featured:
@@ -368,8 +375,8 @@ async def list_opportunities(
         docs = [d for d in docs if d["deadline_state"] == deadline_status]
 
     def sort_key(d):
-        closed = 1 if d["deadline_state"] == "closed" else 0
-        return (closed, d["days_left"] if d["days_left"] is not None else 9999)
+        grp = 2 if d["deadline_state"] == "closed" else (1 if d["days_left"] is None else 0)
+        return (grp, d["days_left"] if d["days_left"] is not None else 9999)
     docs.sort(key=sort_key)
     return docs[:limit]
 
@@ -525,17 +532,18 @@ async def generate_digest(body: DigestIn, admin: dict = Depends(require_admin)):
     if body.location:
         q["location"] = {"$regex": body.location, "$options": "i"}
     if body.career_stage:
-        q["career_stage"] = {"$in": [body.career_stage, "Any"]}
+        q["career_stage"] = {"$regex": f"({body.career_stage}|Any|Open to all)", "$options": "i"}
     docs = await db.opportunities.find(q, {"_id": 0}).to_list(500)
     docs = [enrich(d) for d in docs]
-    docs = [d for d in docs if d["deadline_state"] != "closed" and
-            (d["days_left"] is None or d["days_left"] <= body.deadline_window)]
-    docs.sort(key=lambda d: d["days_left"] if d["days_left"] is not None else 9999)
-    picks = docs[:max(1, min(body.limit, 10))]
+    dated = [d for d in docs if d["days_left"] is not None and d["deadline_state"] != "closed"
+             and d["days_left"] <= body.deadline_window]
+    rolling = [d for d in docs if d["deadline_state"] == "rolling"]
+    dated.sort(key=lambda d: d["days_left"])
+    picks = (dated + rolling)[:max(1, min(body.limit, 10))]
 
     lines_wa, lines_em, lines_ig, lines_li = [], [], [], []
     for i, d in enumerate(picks, 1):
-        dl = d["deadline"]
+        dl = d["deadline"] or d.get("deadline_note") or "Recurring"
         days = f"({d['days_left']} days left)" if d["days_left"] is not None else ""
         lines_wa.append(f"{i}. *{d['title']}* — {d['organisation']}\n   {d['summary']}\n   Deadline: {dl} {days} | {d['funding_amount']}\n   Apply: {d['source_url']}")
         lines_em.append(f"{i}. {d['title']} — {d['organisation']}\n   {d['summary']}\n   Deadline: {dl} {days} | Benefit: {d['funding_amount']}\n   Link: {d['source_url']}")

@@ -103,7 +103,8 @@ export default function OpportunityDetail() {
 
         <aside className="space-y-4">
           <div className="bg-white border border-[#D8CFC2] rounded-sm p-5 space-y-3 text-sm">
-            <p className="flex items-center gap-2"><CalendarDays size={15} className="text-[#D94A2B]" /> Deadline: <strong>{opp.deadline}</strong></p>
+            <p className="flex items-center gap-2"><CalendarDays size={15} className="text-[#D94A2B]" /> Deadline: <strong>{opp.deadline || "Recurring"}</strong></p>
+            {opp.deadline_note && <p className="text-xs text-[#7A7A7A] pl-6 -mt-2">{opp.deadline_note}</p>}
             <p className="flex items-center gap-2"><Wallet size={15} className="text-[#D94A2B]" /> {opp.funding_amount}</p>
             <p className="flex items-center gap-2"><MapPin size={15} className="text-[#D94A2B]" /> {opp.location}{opp.online_available ? " · Online available" : ""}</p>
             <p className="flex items-center gap-2"><FileText size={15} className="text-[#D94A2B]" /> Fee: {opp.application_fee || "None"}</p>

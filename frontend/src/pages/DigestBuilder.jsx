@@ -95,7 +95,7 @@ export default function DigestBuilder() {
                   <div>
                     <p className="font-medium">{o.title} — {o.organisation}</p>
                     <p className="text-[#7A7A7A]">{o.summary}</p>
-                    <p className="text-xs mt-1">Deadline {o.deadline} ({o.days_left} days) · {o.funding_amount} · <a href={o.source_url} className="text-[#D94A2B] hover:underline" target="_blank" rel="noopener noreferrer">Source</a></p>
+                    <p className="text-xs mt-1">Deadline {o.deadline || o.deadline_note || "recurring"}{o.days_left != null ? ` (${o.days_left} days)` : ""} · {o.funding_amount} · <a href={o.source_url} className="text-[#D94A2B] hover:underline" target="_blank" rel="noopener noreferrer">Source</a></p>
                   </div>
                 </li>
               ))}

@@ -1,0 +1,29 @@
+{
+  "summary": "Iteration 2 testing PASSED. Backend: 37/37 pytest passed (24 existing suite + 13 new iter2 tests covering real Excel data counts 71/58 rolling/12 closed/1 closing_month, deadline_note field, career_stage substring matching for multi-value stages like 'Emerging; Mid-career', admin create with empty deadline yielding rolling, and digest picks dated-first-then-rolling with deadline_note text in outputs). Frontend: Directory shows 71 opps with 24/page pagination (Page 1 of 3, prev disabled p1, next disabled p3, p3=23 cards), Recurring filter=58, Closed=12, Closing_month=1; all Recurring cards render 'Recurring — check cycle' badge; opportunity detail for SYA rolling shows 'Deadline: Recurring' + deadline_note text below + match summary '56% match — ... suitable for emerging practitioners, recurring cycle — verify the current window' (proves multi-value career_stage substring match + rolling reason both fire); save toggle sets button to 'Saved' and /tracker lists the saved rolling opp with deadline_note as the visible deadline label; admin form opp-deadline-note testid present, submitting with empty deadline creates a rolling opportunity visible in admin list; digest builder with deadline_window=30 produces 8 picks (IFA dated first '30 days left', then rolling items with 'Annual cycle (check CCRT/MoC portal) · Recurring - verify current cycle' text) and WhatsApp textarea = 3141 chars.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/backend/tests/test_iteration2.py",
+    "/app/test_reports/pytest/pytest_results.xml",
+    "/app/test_reports/pytest/pytest_iter2.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Login page inputs lack data-testid attributes (login-email/login-password/login-submit-button) despite iteration_1 report referencing them. Testing worked via placeholder+type selectors but adding data-testid would harden future test scripts.",
+    "The 'open' deadline_status filter now returns 0 items because the sole dated-open opp (IFA, 2026-07-31, 30 days) falls into 'closing_month' bucket. This is per current logic (days <= 30 → closing_month). Consider whether 'open' should also include 'closing_month/closing_soon' as a superset for UX clarity, since users may expect the 'Open' filter to show everything not closed and not recurring.",
+    "server.py still uses deprecated FastAPI on_event startup handlers (carry-over from iter 1) — non-blocking.",
+    "CORS_ORIGINS defaults to '*' with allow_credentials=True (carry-over from iter 1).",
+    "No brute-force lockout on /api/auth/login (mentioned in playbook_testing_instructions; not required by feature list).",
+    "deadline_info returns days=None when parsing fails silently via bare except — fine, but a targeted ValueError catch would be cleaner."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration2.py (new)"
+  ],
+  "success_rate": {"backend": "100% (37/37)", "frontend": "100%"},
+  "test_credentials": "Admin: admin@onanar.in / admin123; Artist: artist@test.in / artist123.",
+  "seed_data_creation": "None persisted. Backend TestAdminCreateEmptyDeadline creates+deletes a TEST_Recurring_* rolling opportunity. UI-created TEST_UI_Recurring opp cleaned up via admin API post-test. Artist profile now stored: primary_discipline='Visual Arts', career_stage='Emerging', keywords=['painting'], state='Maharashtra', preferred_types=['Grant'].",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All 71 real opportunities imported. Backend pytest suite is now 37 tests (backend_test.py + test_iteration2.py). Data snapshot as of Jan 2026: 58 rolling, 12 closed, 1 closing_month (IFA 2026-07-31). If closing_month count changes as time advances past ~2026-06-30, update TestRealDataCounts.test_open_dated_count_1 (state may shift to closing_soon <=7d then closed). Login inputs on /login use placeholders (email='you@example.com', password shown by type='password') — use those or add data-testid in future iterations."
+}
