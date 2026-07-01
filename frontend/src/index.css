@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,54 +6,109 @@
 
 body {
     margin: 0;
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: 'Instrument Sans', system-ui, sans-serif;
+    background: #FBF9F4;
+    color: #23003F;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
 .font-display {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Host Grotesk', 'Instrument Sans', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+}
+
+.section-num {
+    font-family: 'Instrument Sans', sans-serif;
+}
+
+/* Bento tile primitives */
+.bento {
+    border-radius: 24px;
+    box-shadow: 0 2px 10px rgba(35, 0, 63, 0.05);
+    transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bento-sm {
+    border-radius: 18px;
+    box-shadow: 0 2px 8px rgba(35, 0, 63, 0.04);
+    transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bento-hover:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 28px rgba(35, 0, 63, 0.10);
+}
+
+/* Highlighted marker text — a light-colored block behind a phrase */
+.marker-butter {
+    background: #FFFDB4;
+    padding: 0 0.35em;
+    border-radius: 6px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+}
+
+.marker-lilac {
+    background: #BCACCE;
+    padding: 0 0.35em;
+    border-radius: 6px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+}
+
+/* Numbered section label */
+.section-num {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    color: #F94500;
+    text-transform: uppercase;
 }
 
 @layer base {
     :root {
-        --background: 40 45% 94%;
-        --foreground: 0 0% 12%;
+        --background: 40 40% 97%;
+        --foreground: 275 100% 12%;
         --card: 0 0% 100%;
-        --card-foreground: 0 0% 12%;
+        --card-foreground: 275 100% 12%;
         --popover: 0 0% 100%;
-        --popover-foreground: 0 0% 12%;
-        --primary: 11 69% 51%;
+        --popover-foreground: 275 100% 12%;
+        --primary: 275 100% 12%;
         --primary-foreground: 0 0% 100%;
-        --secondary: 126 17% 37%;
-        --secondary-foreground: 0 0% 100%;
-        --muted: 40 30% 90%;
-        --muted-foreground: 0 0% 45%;
-        --accent: 40 30% 90%;
-        --accent-foreground: 0 0% 12%;
-        --destructive: 0 84.2% 60.2%;
-        --destructive-foreground: 0 0% 98%;
-        --border: 35 22% 80%;
-        --input: 35 22% 80%;
-        --ring: 11 69% 51%;
-        --radius: 0.15rem;
+        --secondary: 275 20% 74%;
+        --secondary-foreground: 275 100% 12%;
+        --muted: 40 40% 94%;
+        --muted-foreground: 275 20% 40%;
+        --accent: 15 100% 49%;
+        --accent-foreground: 0 0% 100%;
+        --destructive: 15 100% 49%;
+        --destructive-foreground: 0 0% 100%;
+        --border: 275 20% 88%;
+        --input: 275 20% 88%;
+        --ring: 15 100% 49%;
+        --radius: 0.75rem;
     }
 }
 
 @layer base {
-    * {
-        @apply border-border;
-    }
-    body {
-        @apply bg-background text-foreground;
-    }
+    * { @apply border-border; }
+    body { @apply bg-background text-foreground; }
 }
 
 ::selection {
-    background: #d94a2b;
-    color: #fff;
+    background: #F94500;
+    color: #FFFDB4;
 }
 
 input:focus, textarea:focus, select:focus {
     outline: none;
 }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #FBF9F4; }
+::-webkit-scrollbar-thumb { background: #BCACCE; border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: #23003F; }

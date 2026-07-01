@@ -4,7 +4,7 @@ import { Menu, X } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 const linkCls = ({ isActive }) =>
-  `text-sm tracking-wide transition-colors ${isActive ? "text-[#D94A2B]" : "text-[#1F1F1F] hover:text-[#D94A2B]"}`;
+  `text-sm font-medium tracking-wide transition-colors ${isActive ? "text-flame" : "text-ink hover:text-flame"}`;
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -18,7 +18,7 @@ export default function Navbar() {
       <NavLink data-testid="nav-opportunities" to="/opportunities" className={linkCls} onClick={() => setOpen(false)}>Opportunities</NavLink>
       {user && user.role !== "admin" && (
         <>
-          <NavLink data-testid="nav-tracker" to="/tracker" className={linkCls} onClick={() => setOpen(false)}>My Tracker</NavLink>
+          <NavLink data-testid="nav-tracker" to="/tracker" className={linkCls} onClick={() => setOpen(false)}>Tracker</NavLink>
           <NavLink data-testid="nav-profile" to="/profile" className={linkCls} onClick={() => setOpen(false)}>Profile</NavLink>
         </>
       )}
@@ -33,39 +33,39 @@ export default function Navbar() {
   );
 
   const authBtns = user ? (
-    <div className="flex items-center gap-4">
-      <span className="text-sm text-[#7A7A7A] hidden sm:inline">{user.name}</span>
+    <div className="flex items-center gap-3">
+      <span className="text-sm text-ink/60 hidden sm:inline">{user.name}</span>
       <button data-testid="logout-button" onClick={handleLogout}
-        className="text-sm border border-[#1F1F1F] px-4 py-1.5 rounded-sm hover:bg-[#1F1F1F] hover:text-white transition-colors">
+        className="text-sm bg-ink text-butter px-5 py-2 rounded-full hover:bg-flame hover:text-white transition-all">
         Log out
       </button>
     </div>
   ) : (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2">
       <Link data-testid="nav-login" to="/login" onClick={() => setOpen(false)}
-        className="text-sm border border-[#1F1F1F] px-4 py-1.5 rounded-sm hover:bg-[#1F1F1F] hover:text-white transition-colors">Log in</Link>
+        className="text-sm text-ink px-4 py-2 rounded-full hover:bg-lilac transition-colors">Log in</Link>
       <Link data-testid="nav-signup" to="/signup" onClick={() => setOpen(false)}
-        className="text-sm bg-[#D94A2B] text-white px-4 py-1.5 rounded-sm hover:bg-[#B83D21] transition-colors">Sign up</Link>
+        className="text-sm bg-flame text-white px-5 py-2 rounded-full hover:bg-ink transition-all">Sign up</Link>
     </div>
   );
 
   return (
-    <header className="sticky top-0 z-40 bg-[#F7F2EA]/95 backdrop-blur-sm border-b border-[#D8CFC2]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between">
-        <Link data-testid="nav-logo" to="/" className="flex items-baseline gap-3">
-          <span className="font-display text-3xl font-semibold tracking-tight text-[#1F1F1F]">Onanar</span>
-          <span className="hidden md:inline text-xs uppercase tracking-widest text-[#7A7A7A]">India's Opportunity Desk</span>
+    <header className="sticky top-0 z-40 bg-paper/90 backdrop-blur-md border-b border-lilac/40">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between gap-4">
+        <Link data-testid="nav-logo" to="/" className="flex items-baseline gap-3 group">
+          <span className="font-display text-4xl leading-none text-ink group-hover:text-flame transition-colors">Onanar</span>
+          <span className="hidden md:inline text-[10px] uppercase tracking-[0.3em] text-ink/50 font-medium">Opportunity Desk</span>
         </Link>
         <nav className="hidden lg:flex items-center gap-8">{links}</nav>
         <div className="hidden lg:block">{authBtns}</div>
-        <button data-testid="mobile-menu-button" className="lg:hidden" onClick={() => setOpen(!open)}>
-          {open ? <X size={22} /> : <Menu size={22} />}
+        <button data-testid="mobile-menu-button" className="lg:hidden text-ink" onClick={() => setOpen(!open)}>
+          {open ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
       {open && (
-        <div className="lg:hidden border-t border-[#D8CFC2] px-6 py-4 flex flex-col gap-4 bg-[#F7F2EA]">
+        <div className="lg:hidden border-t border-lilac/40 px-6 py-5 flex flex-col gap-4 bg-paper">
           {links}
-          {authBtns}
+          <div className="pt-2 border-t border-lilac/40">{authBtns}</div>
         </div>
       )}
     </header>
