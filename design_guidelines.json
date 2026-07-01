@@ -1,0 +1,115 @@
+{
+  "project_name": "Onanar",
+  "domain": "Creative Opportunities & Cultural Journal",
+  "theme": "light",
+  "archetype": "Organic & Earthy / Swiss & High-Contrast (Editorial Hybrid)",
+  "discovery": {
+    "target_audience": "Indian artists, designers, filmmakers, musicians, writers, researchers, craft practitioners.",
+    "emotional_tone": "Cultural, serious, trustworthy, useful, premium.",
+    "visual_mood": "Minimalist editorial journal, print-like layout, warm analog feel. No flashy SaaS look, no gradients."
+  },
+  "typography": {
+    "headings": {
+      "family": "Cormorant Garamond, serif",
+      "weights": ["400", "500", "600"],
+      "usage": "H1-H4. Expressive, tight tracking on large text."
+    },
+    "body": {
+      "family": "IBM Plex Sans, sans-serif",
+      "weights": ["400", "500"],
+      "usage": "Body text, metadata, form labels. High legibility, neutral."
+    },
+    "scale": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl tracking-tight leading-none",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl tracking-tight",
+      "h3": "text-xl sm:text-2xl",
+      "body": "text-base leading-relaxed",
+      "metadata": "text-sm tracking-wide uppercase font-medium"
+    }
+  },
+  "colors": {
+    "background": {
+      "main": "#F7F2EA",
+      "surface": "#FFFFFF"
+    },
+    "text": {
+      "primary": "#1F1F1F",
+      "secondary": "#4F6F52",
+      "muted": "#7A7A7A"
+    },
+    "brand": {
+      "accent": "#D94A2B",
+      "success_muted": "#4F6F52",
+      "border": "#D8CFC2"
+    },
+    "tailwind_config_example": {
+      "background": "#F7F2EA",
+      "foreground": "#1F1F1F",
+      "primary": "#D94A2B",
+      "primary-foreground": "#FFFFFF",
+      "border": "#D8CFC2",
+      "muted": "#FFFFFF",
+      "muted-foreground": "#7A7A7A"
+    }
+  },
+  "surfaces_and_borders": {
+    "cards": "Flat background (either transparent or white), 1px solid #D8CFC2 border. No drop shadows. Sharp or slightly rounded corners (rounded-sm max).",
+    "inputs": "1px solid #D8CFC2 border, #F7F2EA or #FFFFFF background. Focus state: 1px solid #1F1F1F, no ring.",
+    "buttons": {
+      "primary": "bg-[#D94A2B] text-white hover:bg-[#B83D21] transition-colors rounded-sm px-6 py-2",
+      "secondary": "bg-transparent border border-[#1F1F1F] text-[#1F1F1F] hover:bg-[#1F1F1F] hover:text-white transition-colors rounded-sm",
+      "ghost": "hover:bg-[#D8CFC2]/30 text-[#1F1F1F]"
+    }
+  },
+  "layout_and_spacing": {
+    "grid": "CSS Grid, 12-column foundation. Use gap-8 or gap-12 for generous whitespace. Avoid standard equal squares.",
+    "padding": "Use generous padding (p-8, p-12) inside major containers to evoke an editorial print layout.",
+    "alignment": "Left-align dense text and opportunity details. Top-align grid items to avoid jagged content.",
+    "navigation": "Top bar navigation. Minimalist, transparent or off-white background with 1px bottom border (#D8CFC2). Sticky positioning."
+  },
+  "icons_and_assets": {
+    "library": "lucide-react",
+    "style": "Minimalist, sharp line icons. 1.5px stroke weight.",
+    "images": [
+      {
+        "url": "https://images.pexels.com/photos/5867750/pexels-photo-5867750.jpeg",
+        "category": "hero",
+        "description": "Artisan crafting clay sculpture. Represents physical craft and creation."
+      },
+      {
+        "url": "https://images.pexels.com/photos/33721707/pexels-photo-33721707.jpeg",
+        "category": "feature_art",
+        "description": "Senior artist sketching in studio. Represents deep cultural practice."
+      },
+      {
+        "url": "https://images.pexels.com/photos/3945322/pexels-photo-3945322.jpeg",
+        "category": "feature_film",
+        "description": "Filmmaker camera minimal. Represents digital/film opportunities."
+      },
+      {
+        "url": "https://images.pexels.com/photos/19707470/pexels-photo-19707470.jpeg",
+        "category": "feature_architecture",
+        "description": "Museum architecture. Represents institutional and residency opportunities."
+      }
+    ]
+  },
+  "component_guidelines": {
+    "tech_stack": "React.js (JavaScript, NOT TypeScript), Tailwind CSS, Shadcn UI.",
+    "shadcn_customization": "Strip default borders and radiuses to match the minimal editorial theme. Disable generic box-shadows. Use strict #D8CFC2 for borders.",
+    "testing": "All interactive elements MUST include data-testid attribute in kebab-case based on role (e.g., data-testid='apply-button').",
+    "opportunity_card": "Card layout with top badge (discipline), bold title, grid for details (location, funding, deadline). Display match score with a discreet progress bar or percentage in #D94A2B. Add a prominent 'Save' icon.",
+    "tracker_pipeline": "Kanban-style columns (Interested, Preparing, Applied, Accepted, Rejected, Archived) using horizontal scroll on mobile, flex row on desktop. Columns separated by 1px #D8CFC2 border.",
+    "forms": "Left-aligned, ample padding. Focus states should shift border color to #1F1F1F, strictly avoiding glow/ring defaults."
+  },
+  "instructions_to_main_agent": [
+    "Ensure all code is written in JavaScript (.js/.jsx), not TypeScript.",
+    "Apply data-testid to every button, link, and form input as per requirements.",
+    "Set the global background to #F7F2EA and text to #1F1F1F.",
+    "Use Cormorant Garamond for headings and IBM Plex Sans for body text.",
+    "DO NOT use generic gradients or rounded-xl card designs. Keep borders sharp (rounded-none or rounded-sm) and use 1px solid #D8CFC2.",
+    "Build the tracker using a Kanban or dense list structure that feels organized and academic.",
+    "For the Digest Builder, provide standard textarea fields with a 'Copy to Clipboard' button (use navigator.clipboard) styled elegantly.",
+    "Implement the Impact Dashboard with clean metric cards and minimal bar/line charts using Recharts, colored with the accent (#D94A2B) and muted green (#4F6F52).",
+    "Use the provided image URLs in the icons_and_assets section for placeholder content, do not use dummyimage.com."
+  ]
+}
